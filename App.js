@@ -1,67 +1,60 @@
 import {
   StyleSheet,
-  Text,
   View,
+  Text,
   SafeAreaView,
-  ScrollView,
-  RefreshControl,
-  FlatList,
-  SectionList,
+  TextInput,
+  Pressable
 } from "react-native";
-import React from 'react';
+import React, { useState } from 'react';
 
 const App = () => {
 
-  const [sections, setSections] = React.useState([
-    {
-      title: 'Title 1',
-      data: ['Item 1-1', 'Item 1-2'],
-    },
-    {
-      title: 'Title 2',
-      data: ['Item 2-1', 'Item 2-2'],
-    },
-  ]);
-
-  const [refreshing, setRefreshing] = React.useState(false);
-  
-  const onRefresh = () => {
-    setRefreshing(true);
-    const adding_index = sections.length + 1;
-    setSections([...sections,
-    {
-      title: 'Title ' + adding_index,
-      data:
-        [
-          'Item ' + adding_index + '-1',
-          'Item ' + adding_index + '-2'
-        ],
-    }
-    ]);
-    setRefreshing(false);
-  }
-
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [authorized, setAuthorized] = useState(false);
 
   return (
     <SafeAreaView>
-      <SectionList
-        keyExtractor={(item, index) => index.toString()}
-        sections={sections}
-        renderItem={({ item }) => (
-            <Text style={styles.text}>{item}</Text>
-        )}
-        renderSectionHeader={({ section }) => (
-          <View style={styles.item}>
-            <Text style={styles.text}>{section.title}</Text>
-          </View>
-        )}
-        refreshControl={
-          < RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-          />
-        }
-      />
+      <View style={styles.wrapper}>
+        <Text style={styles.title}>Email:</Text>
+        <TextInput
+          style={styles.input}
+          value={email}
+          onChangeText={setEmail}
+          placeholder="e.g abc@mail.com"
+          keyboardType="email-address"
+        />
+        <Text style={styles.title}>Password:</Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={setPassword}
+          value={password}
+          secureTextEntry={true}
+          placeholder="6-8 characters"
+        />
+        <Text style={styles.title}>Phone number:</Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={setPhone}
+          value={phone}
+          placeholder="e.g 0930475566"
+          keyboardType="numeric"
+          maxLength={10}
+        />
+        <Pressable
+          disabled={authorized}
+          onPress={() => {
+            email !== "" && phone !== "" && password !== "" && setAuthorized(true);
+            setEmail(''); setPhone(''); setPassword('');
+          }}
+          style={styles.login_bttn}
+        >
+          <Text style={styles.login_txt}>Login</Text>
+        </Pressable>
+        <Text>{authorized ? "You're logged in" : ""}</Text>
+      </View>
     </SafeAreaView>
   );
 }
@@ -73,18 +66,27 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   wrapper: {
-    padding: 10,
+    padding: 20,
+    display: "flex",
+    flexDirection: "column",
   },
-  text: {
+  title: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  input: {
+    padding: 5,
+    backgroundColor: "#FAF5E4",
+    marginBottom: 20,
+  },
+  login_bttn: {
+    backgroundColor: "#125B50",
+    width: 100,
+    padding: 15,
+    borderRadius: 5,
+  },
+  login_txt: {
     color: "#fff",
-    fontSize: 20,
-  },
-  item: {
-    flex: 1,
-    height: 50,
-    backgroundColor: "#92BA92",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 10
-  },
+    textAlign: "center",
+  }
 });
